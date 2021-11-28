@@ -567,7 +567,7 @@ function calc_motion(Px,Py,Pz,Qx,Qy,Qz)
 	# time span
 	t_begin = 0
 	t_end   = 1.0
-	tsteps  = 111
+	tsteps  = 11
 	tspan = (t_begin,t_end)
 
 	##########################################
