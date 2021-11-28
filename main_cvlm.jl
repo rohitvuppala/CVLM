@@ -703,7 +703,7 @@ function main(inp_file,iseq=0)
 
 	nspn,spn_map,spn_loc,sbar,ebar,mbar,nbar,cbar,dbar,tbar,chord,twist,α_zl,θ,Λ,ds = geom_calc(nwing,ntot_patch,npatch_perwing,ntot_lat,nspan_perpatch,nlat_perpatch,xyz_qc_patch,chord_patch,twist_patch,α_zl_patch)
 
-	AIC,AICₘ,AICₜ,J,P_x,P_y,P_z,Q_x,Q_y,Q_z,Gxgamma,Gygamma,
+	AIC,AICₘ,AICₜ,J,Px,Py,Pz,Qx,Qy,Qz,Gxgamma,Gygamma,
 	Gzgamma,Hxgamma,Hygamma,Hzgamma,Gxv,Gyv,Gzv,Hxv,Hyv,Hzv,Gxomega,
 	Gyomega,Gzomega,Hxomega,Hyomega,Hzomega,crsbar = calc_AICs(ntot_lat,sbar,ebar,cbar,mbar,nbar,tbar)
 
