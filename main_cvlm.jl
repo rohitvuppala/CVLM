@@ -562,32 +562,35 @@ end
 
 	Output:
 """
-function calc_motion(Px,Py,Pz,Qx,Qy,Qz)
+function calc_motion(Px,Py,Pz,Qx,Qy,Qz,inp_file)
+
+	inp_data = YAML.load_file(inp_file)
+	@info "Reading Motion Parameters Input File"
 
 	# time span
-	t_begin = 0
-	t_end   = 1.0
-	tsteps  = 11
+	t_begin = inp_data["t_begin"]
+	t_end   = inp_data["t_end"]
+	tsteps  = inp_data["tsteps"]
 	tspan = (t_begin,t_end)
 
 	##########################################
 	# initial conditions
 	##########################################
-	u0 = 100
-	v0 = 0
-	w0 = 3
+	u0 = inp_data["u0"]
+	v0 = inp_data["v0"]
+	w0 = inp_data["w0"]
 
-	p0 = 0
-	q0 = 0
-	r0 = 0
+	p0 = inp_data["p0"]
+	q0 = inp_data["q0"]
+	r0 = inp_data["r0"]
 
-	phi0 = 0
-	theta0 = deg2rad(2)
-	psi0 = 0
+	phi0 = inp_data["phi0"]
+	theta0 = deg2rad(inp_data["theta0"])
+	psi0 = inp_data["psi0"]
 
-	x0 = 0
-	y0 = 0
-	z0 = -500
+	x0 = inp_data["x0"]
+	y0 = inp_data["y0"]
+	z0 = inp_data["z0"]
 
 
 	###############
@@ -600,15 +603,16 @@ function calc_motion(Px,Py,Pz,Qx,Qy,Qz)
 	#############################################
 	# parameter definitions
 	#############################################
-	m = 10
-	g = 9.81
-	rho = 1.225
-	T = 0.2 # thrust (will need to determine from induced drag at trim?)
+	m = inp_data["m"]
+	g = inp_data["g"]
+	rho = inp_data["rho"]
+	T = inp_data["T"] # thrust (will need to determine from induced drag at trim?)
 	# Inertia constants for calculating GAMMA, C1-C9
-	Ix = 1
-	Iy = 1
-	Iz = 1
-	Ixz = 0.2
+	Ix  = inp_data["Ix"]
+	Iy  = inp_data["Iy"]
+	Iz  = inp_data["Iz"]
+	Ixz = inp_data["Ixz"]
+
 	# constants to deal with inertial coupling
 	GAMMA = Ix*Iz-Ixz^2
 	c1 = ((Iy-Iz)*Iz-Ixz^2)/GAMMA
@@ -622,8 +626,8 @@ function calc_motion(Px,Py,Pz,Qx,Qy,Qz)
 	c9 = Ix/GAMMA
 
 	# rotating mass along longitudinal axis (spinning propellor or turbomachinery) - these will probably always be zero for using
-	Ip = 0  # rotating inertia
-	OmegaP = 0  # rpm of rotating machinery
+	Ip     = inp_data["Ip"]  # rotating inertia
+	OmegaP = inp_data["OmegaP"]  # rpm of rotating machinery
 
 
 
@@ -682,7 +686,7 @@ function calc_motion(Px,Py,Pz,Qx,Qy,Qz)
 	#sol = solve(prob,tstops=tstops,adaptive=false)
 	#sol  = solve(prob,Rodas4())
 	#sol  = solve(prob,Rosenbrock23())
-	sol = solve(prob,dtmin=1e-6,Rosenbrock23(),saveat=LinRange(t_begin,t_end,tsteps))
+	sol = solve(prob,Rodas4(),dtmin=1e-6,saveat=LinRange(t_begin,t_end,tsteps))
 	return sol
 end
 """
@@ -694,7 +698,7 @@ end
 
 	Output:
 """
-function main(inp_file,iseq=0)
+function main(inp_file,param_file,iseq=0)
 
     sref,bref,cref,aseq,vinf,ρ,alpha,nwing,
 	ntot_patch,npatch_perwing,
@@ -707,7 +711,7 @@ function main(inp_file,iseq=0)
 	Gzgamma,Hxgamma,Hygamma,Hzgamma,Gxv,Gyv,Gzv,Hxv,Hyv,Hzv,Gxomega,
 	Gyomega,Gzomega,Hxomega,Hyomega,Hzomega,crsbar = calc_AICs(ntot_lat,sbar,ebar,cbar,mbar,nbar,tbar)
 
-	sol = calc_motion(Px,Py,Pz,Qx,Qy,Qz)
+	sol = calc_motion(Px,Py,Pz,Qx,Qy,Qz,param_file)
 
 	return sol,Px,Py,Pz,Qx,Qy,Qz
 end
@@ -716,7 +720,7 @@ end
 
 #Cl_spn,nspn,spn_map,spn_loc,θ,rhs,AIC,AICₜ,AICₘ,Λ,sbar,ebar,ds,Γ,chord,cbar,mbar,nbar,Cl,CL,CDind,CDind_ff,SpnLd = main("input.yaml");
 #Px = Py = Pz = Qx = Qy = Qz = zeros(6,6)
-sol,Px,Py,Pz,Qx,Qy,Qz = main("input.yaml");
+sol,Px,Py,Pz,Qx,Qy,Qz = main("input.yaml","motion_param.yaml");
 
 nsteps= size(sol.u,1)
 xyz = zeros(3,nsteps)

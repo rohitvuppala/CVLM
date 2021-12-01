@@ -8,35 +8,35 @@ sref: 10.0
 bref: 10.0
 cref: 1.0
 
-nwing: 1
+nwing: 2
 
 wing1:
   wing_name: "wing"
   npatch: 2
   patch1:
-    nspan: 1
-    nlat: 10
+    nspan: 2
+    nlat: 50
     root:
-      xyz_qc: [0.0,-5.0,0.0]
+      xyz_qc: [0.25,-5.0,0.0]
       chord:  1.0
       twist:  0.0
       alpha_zl: 0.0
     tip:
-      xyz_qc: [0.0,0.0,0.0]
+      xyz_qc: [0.25,0.0,0.0]
       chord:  1.0
       twist:  0.0
       alpha_zl: 0.0
 
   patch2:
-    nspan: 1
-    nlat: 10
+    nspan: 2
+    nlat: 50
     root:
-      xyz_qc: [0.0,0.0,0.0]
+      xyz_qc: [0.25,0.0,0.0]
       chord:  1.0
       twist:  0.0
       alpha_zl: 0.0
     tip:
-      xyz_qc: [0.0,5.0,0.0]
+      xyz_qc: [0.25,5.0,0.0]
       chord:  1.0
       twist:  0.0
       alpha_zl: 0.0

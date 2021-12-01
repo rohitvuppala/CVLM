@@ -1,0 +1,43 @@
+#
+# Parameters to be set to calcualte the motion for the aircraft
+#
+
+# time span
+t_begin: 0
+t_end  : 1.0
+tsteps : 11
+
+##########################################
+# initial conditions
+##########################################
+u0 : 100
+v0 : 0
+w0 : 3
+
+p0 : 0
+q0 : 0
+r0 : 0
+
+phi0   : 0
+theta0 : 2 # in degrees
+psi0   : 0
+
+x0 : 0.0
+y0 : 0.0
+z0 : -500.0
+
+#############################################
+# parameter definitions
+#############################################
+m   : 10
+g   : 9.81
+rho : 1.225
+T   : 0.2 # thrust (will need to determine from induced drag at trim?)
+# Inertia constants for calculating GAMMA, C1-C9
+Ix : 1
+Iy : 1
+Iz : 1
+Ixz: 0.2
+# rotating mass along longitudinal axis (spinning propellor or turbomachinery) - these will probably always be zero for using
+Ip    : 0  # rotating inertia
+OmegaP: 0
