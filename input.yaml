@@ -8,7 +8,7 @@ sref: 10.0
 bref: 10.0
 cref: 1.0
 
-nwing: 1
+nwing: 2
 
 wing1:
   wing_name: "wing"
@@ -45,8 +45,8 @@ wing2:
   wing_name: "tail"
   npatch: 2
   patch1:
-    nspan: 2
-    nlat: 25
+    nspan: 1
+    nlat: 5
     root:
       xyz_qc: [1.25,-2.5,0.01]
       chord:  1.0
@@ -59,8 +59,8 @@ wing2:
       alpha_zl: 0.0
 
   patch2:
-    nspan: 2
-    nlat: 25
+    nspan: 1
+    nlat: 5
     root:
       xyz_qc: [1.25,0.0,0.01]
       chord:  1.0

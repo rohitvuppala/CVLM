@@ -195,25 +195,30 @@ function geom_calc(nwing,ntot_patch,npatch_perwing,ntot_lat,nspan_perpatch,nlat_
 		ds    = zeros(ntot_lat)         # lattice length
 
 
-		spn_map = zeros(Int64,ntot_lat) #Spanwise mapping
-
+		spn_map 	 = zeros(Int64,ntot_lat) #Spanwise mapping
+		lat2wing_map = zeros(Int64,ntot_lat)  #Mapping from lattice to wing
 
 		nlatspn_perwing = zeros(Int64,nwing) #Span per wing
+		nlat_perwing    = zeros(Int64,nwing) #Number of lattices in a wing
+	
 
 		# Loop over to find total span wise locations (Could be eliminated/improved)
 		nspn  = 0
 		ipatch=0
 		for i in 1:nwing
+			nlatw = 0
 			for j in 1:npatch_perwing[i]
 				ipatch = ipatch + 1
 				nlat_perspan = Int64(nlat_perpatch[ipatch]/nspan_perpatch[ipatch])
 				for k in 1:nlat_perspan
 					nspn = nspn + 1
 				end
+				nlatw = nlatw + nlat_perpatch[ipatch] 
 			end
+			nlat_perwing[i] = nlatw
 		end
 
-
+		
 		spn_loc = zeros(nspn) #Spanwise locations
 
 		#Initialise counters
@@ -300,7 +305,11 @@ function geom_calc(nwing,ntot_patch,npatch_perwing,ntot_lat,nspan_perpatch,nlat_
 								for ip in 1:ipatch-1
 									ispn_bef = ispn_bef + Int64(nlat_perpatch[ip]/nspan_perpatch[ip])
 								end
+								
+								#Span map
 								spn_map[ilat] = ispn_bef + k
+								#Lat2Wing map
+								lat2wing_map[ilat] = i
 
 						end
 						end
@@ -317,7 +326,7 @@ function geom_calc(nwing,ntot_patch,npatch_perwing,ntot_lat,nspan_perpatch,nlat_
                 display(xyz_qc_patch)
         end
 
-        return nspn,spn_map,spn_loc,sbar,ebar,mbar,nbar,cbar,dbar,tbar,chord,twist,α_zl,θ,Λ,ds
+        return nspn,spn_map,spn_loc,lat2wing_map,sbar,ebar,mbar,nbar,cbar,dbar,tbar,chord,twist,α_zl,θ,Λ,ds
 end
 """
     calc_vind_sinf(rbar,sbar,tbar)
@@ -694,9 +703,11 @@ end
 
 	Main driver function to calculate all the values required
 
-	Input : inp_file - Input File
+	Input : 
+	inp_file - Input File
 
-	Output:
+	Output: 
+	sol - solution for motion
 """
 function main(inp_file,param_file,iseq=0)
 
@@ -705,7 +716,7 @@ function main(inp_file,param_file,iseq=0)
 	ntot_lat,nspan_perpatch,nlat_perpatch,xyz_qc_patch,
 	chord_patch,twist_patch,α_zl_patch = read_inp(inp_file)
 
-	nspn,spn_map,spn_loc,sbar,ebar,mbar,nbar,cbar,dbar,tbar,chord,twist,α_zl,θ,Λ,ds = geom_calc(nwing,ntot_patch,npatch_perwing,ntot_lat,nspan_perpatch,nlat_perpatch,xyz_qc_patch,chord_patch,twist_patch,α_zl_patch)
+	nspn,spn_map,spn_loc,lat2wing_map,sbar,ebar,mbar,nbar,cbar,dbar,tbar,chord,twist,α_zl,θ,Λ,ds = geom_calc(nwing,ntot_patch,npatch_perwing,ntot_lat,nspan_perpatch,nlat_perpatch,xyz_qc_patch,chord_patch,twist_patch,α_zl_patch)
 
 	AIC,AICₘ,AICₜ,J,Px,Py,Pz,Qx,Qy,Qz,Gxgamma,Gygamma,
 	Gzgamma,Hxgamma,Hygamma,Hzgamma,Gxv,Gyv,Gzv,Hxv,Hyv,Hzv,Gxomega,
@@ -713,7 +724,7 @@ function main(inp_file,param_file,iseq=0)
 
 	sol = calc_motion(Px,Py,Pz,Qx,Qy,Qz,param_file)
 
-	return sol,Px,Py,Pz,Qx,Qy,Qz
+	return sol,Px,Py,Pz,Qx,Qy,Qz,lat2wing_map
 end
 
 
