@@ -563,6 +563,19 @@ function calc_AICs(ntot_lat,sbar,ebar,cbar,mbar,nbar,tbar,debug=0)
 	Gyomega,Gzomega,Hxomega,Hyomega,Hzomega,crsbar
 end
 """
+    motion_controller()
+
+	Calculating the deflection on wing2/tail for stabilising
+
+	Output:
+		def - deflection in radian 
+"""
+function motion_controller()
+
+	def = 0.01
+	return def
+end
+"""
     calc_motion()
 
 	Calculating the 6DOF of motion
@@ -571,10 +584,13 @@ end
 
 	Output:
 """
-function calc_motion(Px,Py,Pz,Qx,Qy,Qz,inp_file)
+function calc_motion(Px,Py,Pz,Qx,Qy,Qz,param_file,lat2wing_map,ntot_lat,sbar,ebar,cbar,mbar,nbar,tbar)
 
-	inp_data = YAML.load_file(inp_file)
+	inp_data = YAML.load_file(param_file)
 	@info "Reading Motion Parameters Input File"
+
+	#condition to determine control
+	ictrl = inp_data["ictrl"]
 
 	# time span
 	t_begin = inp_data["t_begin"]
@@ -645,7 +661,31 @@ function calc_motion(Px,Py,Pz,Qx,Qy,Qz,inp_file)
 	##################################################
 	pq = [m,g,rho,c1,c2,c3,c4,c5,c6,c7,c8,c9,T,Ip,OmegaP]
 
+	
+	# Controls On
+	if ictrl == 1
+		
+		def = motion_controller()
+		#Rotate the tail by some specification
+		rot          = [cos(def) 0.0 sin(def);0.0 1.0 0.0;-sin(def) 0.0 cos(def)]
+		
+		nbar_new = copy(nbar)
+		#
+		# Can be improved Immensely
+		#
+		for ilat in 1:ntot_lat
+			
+			if lat2wing_map[ilat] == 2
+				nbar_new[:,ilat] = rot*nbar[:,ilat]
+			end
+		end	
 
+		s,s,s,s,Px,Py,Pz,Qx,Qy,Qz, = calc_AICs(ntot_lat,sbar,ebar,cbar,mbar,nbar_new,tbar)
+		
+	end
+
+
+	# ***This is a function inside function***
 	## ODE Function
 	function calc_dx!(dxst,xst,pq,t)
 
@@ -722,7 +762,7 @@ function main(inp_file,param_file,iseq=0)
 	Gzgamma,Hxgamma,Hygamma,Hzgamma,Gxv,Gyv,Gzv,Hxv,Hyv,Hzv,Gxomega,
 	Gyomega,Gzomega,Hxomega,Hyomega,Hzomega,crsbar = calc_AICs(ntot_lat,sbar,ebar,cbar,mbar,nbar,tbar)
 
-	sol = calc_motion(Px,Py,Pz,Qx,Qy,Qz,param_file)
+	sol = calc_motion(Px,Py,Pz,Qx,Qy,Qz,param_file,lat2wing_map,ntot_lat,sbar,ebar,cbar,mbar,nbar,tbar)
 
 	return sol,Px,Py,Pz,Qx,Qy,Qz,lat2wing_map
 end

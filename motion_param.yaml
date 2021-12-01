@@ -2,6 +2,9 @@
 # Parameters to be set to calcualte the motion for the aircraft
 #
 
+# Controls on or off
+ictrl : 0
+
 # time span
 t_begin: 0
 t_end  : 1.0
