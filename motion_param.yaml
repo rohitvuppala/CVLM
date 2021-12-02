@@ -3,7 +3,7 @@
 #
 
 # Controls on or off
-ictrl : 0
+ictrl : 1
 
 # time span
 t_begin: 0

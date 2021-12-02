@@ -576,6 +576,37 @@ function motion_controller()
 	return def
 end
 """
+    calc_fm()
+
+	Calculating the forces and moments from CVLM
+
+	Input:
+		Px -
+		Py -
+		Pz - 
+		xst - state vector of u,v,w,p,q,r,phi,theta,psi,x,y,z
+		rho - density
+
+	Output:
+		Fx -
+		Fy -
+		Fz -
+
+"""
+function calc_fm(Px,Py,Pz,xst,rho)
+
+	u,v,w,p,q,r,phi,theta,psi,x,y,z = xst
+	
+	X = [u;v;w;p;q;r]
+
+	Fx = rho*X'*Px*X
+	Fy = rho*X'*Py*X
+	Fz = rho*X'*Pz*X
+
+	return Fx,Fy,Fz
+end
+
+"""
     calc_motion()
 
 	Calculating the 6DOF of motion
