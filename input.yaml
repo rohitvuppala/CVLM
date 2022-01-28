@@ -3,7 +3,7 @@
 # Unswept, constant chord wing
 # angle units = 'deg'
 
-name: "Testcase1"
+name: "Testcase"
 sref: 10.0
 bref: 10.0
 cref: 1.0
